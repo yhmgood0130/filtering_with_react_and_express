@@ -11,13 +11,13 @@ const VENDOR_LIBS = [
 
 var config = {
     entry: {
-        bundle: APP_DIR + '/Main.jsx',
+        bundle: APP_DIR + '/main.jsx',
         vendor: VENDOR_LIBS
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].[hash].js',
-        publicPath: './'
+        publicPath: '/'
     },
 		resolve: {
 			extensions: ['.js', '.jsx'],
