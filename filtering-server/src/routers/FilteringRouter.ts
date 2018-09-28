@@ -1,21 +1,19 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import db from '../db/dbconnection';
-import { rejects } from 'assert';
-import { resolve } from 'url';
+// import { rejects } from 'assert';
+// import { resolve } from 'url';
 
 interface Filters {
-	// maker: string;
-	// taker: string;
-	// makerFee: BigNumber;
-	// takerFee: BigNumber;
-	// makerTokenAmount: BigNumber;
-	// takerTokenAmount: BigNumber;
-	// makerTokenAddress: string;
-	// takerTokenAddress: string;
-	// salt: BigNumber;
-	// exchangeContractAddress: string;
-	// feeRecipient: string;
-	// expirationUnixTimestampSec: BigNumber;
+	id: string;
+	user_email: string;
+	user_first_name: string;
+	user_last_name: string;
+	screen_width: number; 
+	screen_height: number;
+	visits: number;
+	page_response: number;
+	domain: string;
+	path: string;
 }
 
 const filters: Filters[] = [];
@@ -28,49 +26,122 @@ class Filtering {
 		this.routes();
 	}
 
-	public GetQueries(req: Request, res: Response): void {
-		const filter = req.body;
-		db.query(`SELECT * FROM filtering`, (err, rows, fields) => {
+	public GetFilterTypes(req: Request, res: Response):void {
+		db.query('SELECT * from session_type', (err, rows, fields) => {
 			if (err) {
 				throw err;
 			}
-			console.log(rows);
-			res.send("You did it bro");
+			res.send(rows);
+		});
+	}
+
+	public PostQueries(req: Request, res: Response): void {
+		const filters = req.body;
+		let filterList = "WHERE";
+		filters.queries.map((filter,index) => {
+			switch(filter.query) {
+				case "id":
+					filterList += " id ";
+					break;
+				case "user_email":
+					filterList += " user_email ";
+					break;
+				case "user_first_name":
+					filterList += " user_first_name ";
+					break;
+				case "user_last_name":
+					filterList += " user_last_name ";
+					break;
+				case "screen_width":
+					filterList += " screen_width ";
+					break;
+				case "screen_height":
+					filterList += " screen_height ";
+					break;
+				case "visits":
+					filterList += " visits ";
+					break;
+				case "page_response":
+					filterList += " page_response ";
+					break;
+				case "domain":
+					filterList += " domain ";
+					break;
+				case "path":
+					filterList += " path ";
+					break;
+			}
+
+			switch(filter.string) {
+				case "starts with":
+					filterList += ` LIKE "${filter.value}%"  `;
+					break;
+				case "not start with":
+					filterList += ` NOT LIKE "${filter.value}%"  `;
+					break;
+				case "equals":
+					filterList += ` = "${filter.value}" `;
+					break;
+				case "not equal":
+					filterList += ` != "${filter.value}"  `;
+					break;
+				case "contains":
+					filterList += ` LIKE "%${filter.value}%"  `;
+					break;
+				case "not contain":
+					filterList += ` LIKE "%${filter.value}%"  `;
+					break;
+				case "in list":
+					filterList += ` IN "${filter.value}"  `;
+					break;
+				case "not in list":
+					filterList += ` NOT IN "${filter.value}"  `;
+					break;
+				default:
+					break;
+			}
+
+			switch(filter.number) {
+				case "range":
+					filterList += ` > ${filter.min} AND ${filter.query} < ${filter.max}  `;
+					break;
+				case "less equal":
+					filterList += ` <= ${filter.value} `;
+					break;
+				case "equals":
+					filterList += ` = ${filter.value} `;
+					break;
+				case "not equal":
+					filterList += ` != ${filter.value} `;
+					break;
+				case "greater equal":
+					filterList += ` <= ${filter.value} `;
+					break;
+				case "not contain":
+					filterList += ` LIKE "%${filter.value}%"`;
+					break;
+				default:
+					break;
+			}
+
+			if (filters.queries.length > index + 1) {
+				filterList += " AND ";
+			}
+		})
+		
+		db.query('SELECT * FROM session ' + filterList, (err, rows, fields) => {
+			if (err) {
+				throw err;
+			}
+
+			console.log(JSON.stringify(rows));
+			res.send(rows);
 		})
 	}
 
-	// public PostOrder(req: Request, res: Response): void {
-	// 	const filters = req.body;
-	// 	filters.push(filters);
-
-	// 	let convert = Object.values(filters).join(`","`);
-	// 	convert = `"` + convert + `"`;
-	// 	res.status(201).send(filters);
-		
-	// 	db.query(`INSERT INTO orders (exchangeContractAddress,maker, taker, makerTokenAddress, takerTokenAddress, feeRecipient, makerTokenAmount, takerTokenAmount, makerFee, takerFee, expirationUnixTimestampSec, salt, rate, invRate, orderHash, ecSignatureV, ecSignatureR, ecSignatureS) VALUES (${convert})`,  (err, rows, fields) => {
-	// 		const message = {
-	// 				type: 'update',
-	// 				channel: 'orderbook',
-	// 				requestId: 1,
-	// 				payload: filters
-	// 		};
-	// 	});
-
-
-	// }
-
-	// public RemoveOrder(req: Request, res: Response): void {
-	// 	const request = req.body;
-	// 	db.query(`DELETE FROM orders WHERE ID = ? and orderHash = ?`, [request.ID, request.orderHash] , (err, rows, fields) => {
-	// 		res.status(200).send('Order was removed successfully!')
-	// 	});
-
-	// }
-
 	routes() {
-		this.router.get('/', this.GetQueries);
-		// this.router.post('/', this.PostOrder);
-		// this.router.delete('/', this.RemoveOrder);
+		this.router.post('/filters', this.PostQueries);
+		this.router.get('/filters', this.GetFilterTypes);
 	}
 }
 
