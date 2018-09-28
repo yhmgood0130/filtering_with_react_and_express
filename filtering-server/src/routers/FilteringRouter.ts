@@ -70,31 +70,33 @@ class Filtering {
 				case "path":
 					filterList += " path ";
 					break;
+				defalut:
+					break;
 			}
 
 			switch(filter.string) {
-				case "starts with":
+				case "starts_with":
 					filterList += ` LIKE "${filter.value}%"  `;
 					break;
-				case "not start with":
+				case "not_start_with":
 					filterList += ` NOT LIKE "${filter.value}%"  `;
 					break;
 				case "equals":
 					filterList += ` = "${filter.value}" `;
 					break;
-				case "not equal":
+				case "not_equal":
 					filterList += ` != "${filter.value}"  `;
 					break;
 				case "contains":
 					filterList += ` LIKE "%${filter.value}%"  `;
 					break;
-				case "not contain":
+				case "not_contain":
 					filterList += ` LIKE "%${filter.value}%"  `;
 					break;
-				case "in list":
+				case "in_list":
 					filterList += ` IN "${filter.value}"  `;
 					break;
-				case "not in list":
+				case "not_in_list":
 					filterList += ` NOT IN "${filter.value}"  `;
 					break;
 				default:
@@ -105,19 +107,19 @@ class Filtering {
 				case "range":
 					filterList += ` > ${filter.min} AND ${filter.query} < ${filter.max}  `;
 					break;
-				case "less equal":
+				case "less_equal":
 					filterList += ` <= ${filter.value} `;
 					break;
 				case "equals":
 					filterList += ` = ${filter.value} `;
 					break;
-				case "not equal":
+				case "not_equal":
 					filterList += ` != ${filter.value} `;
 					break;
-				case "greater equal":
+				case "greater_equal":
 					filterList += ` <= ${filter.value} `;
 					break;
-				case "not contain":
+				case "not_contain":
 					filterList += ` LIKE "%${filter.value}%"`;
 					break;
 				default:
@@ -128,11 +130,17 @@ class Filtering {
 				filterList += " AND ";
 			}
 		})
+
+		let query = `SELECT * FROM session ${filterList}`;
+		console.log(query);
 		
-		db.query('SELECT * FROM session ' + filterList, (err, rows, fields) => {
+		
+		db.query(query, (err, rows, fields) => {
 			if (err) {
 				throw err;
 			}
+
+			console.log(query);			
 
 			console.log(JSON.stringify(rows));
 			res.send(rows);
