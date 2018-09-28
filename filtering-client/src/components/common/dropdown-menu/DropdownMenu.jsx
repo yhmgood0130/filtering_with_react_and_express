@@ -3,7 +3,8 @@ import './dropdown-menu.scss';
 
 const DropdownMenu = ({filters, onChange, type}) => {	
 	return (
-		<select className="dropdown" onChange={e => onChange(e,type)}>
+		<select className="dropdown-menu" onChange={e => onChange(e,type)}>
+			<option value=""></option>
 			{
 				filters.map(filter => (
 					<option key={filter.value} value={filter.value} type={filter.type}>
