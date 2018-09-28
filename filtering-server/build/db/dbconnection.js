@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mysql = require("mysql");
 var connection = mysql.createConnection({
     host: '127.0.0.1',
+    // host: 'localhost',
     user: 'root',
     password: 'root',
     database: 'session'

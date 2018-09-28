@@ -1,6 +1,6 @@
 # Filtering with React and Express
 
-> React.js implementation of the Filtering Session Application.
+> Express.js implementation of the Filtering Session Application.
 
 ## Build Setup
 
@@ -13,17 +13,15 @@ npm install
 ### serve with hot reload at localhost:9000
 
 ```
-npm run dev
+npm run server
 ```
 
 ### build for production with minification
 
 ```
-npm run build
+npm run start
 ```
 
-### clean for production files
+### Before running the application
 
-```
-npm run clean
-```
+Please make sure to run the script file session.sql under src/db/ folder.

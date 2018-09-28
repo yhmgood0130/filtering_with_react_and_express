@@ -132,7 +132,7 @@ class Filtering {
 		})
 
 		let query = `SELECT * FROM session ${filterList}`;
-		console.log(query);
+		console.log(query, filters);
 		
 		
 		db.query(query, (err, rows, fields) => {

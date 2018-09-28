@@ -109,8 +109,9 @@ class Home extends Component {
 	submitFilters = (e) => {
 		e.preventDefault();
 		let temp = [...this.state.output] ;
-		let data = { "queries" :temp.filter((el) => {
-			return el.hasOwnProperty('value');
+
+		let data = { "queries": temp.filter((el) => {
+			return el.hasOwnProperty('value') || el.hasOwnProperty('min');
 		})};
 
 		axios({
